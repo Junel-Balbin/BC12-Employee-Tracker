@@ -15,5 +15,9 @@
   "bugs": {
     "url": "https://github.com/Junel-Balbin/BC12-Employee-Tracker/issues"
   },
-  "homepage": "https://github.com/Junel-Balbin/BC12-Employee-Tracker#readme"
+  "homepage": "https://github.com/Junel-Balbin/BC12-Employee-Tracker#readme",
+  "dependencies": {
+    "inquirer": "^8.2.4",
+    "mysql2": "^3.6.0"
+  }
 }
