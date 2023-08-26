@@ -1,0 +1,19 @@
+{
+  "name": "bc12-employee-tracker",
+  "version": "1.0.0",
+  "description": "Employee Tracker",
+  "main": "index.js",
+  "scripts": {
+    "test": "jest"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Junel-Balbin/BC12-Employee-Tracker.git"
+  },
+  "author": "JB",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/Junel-Balbin/BC12-Employee-Tracker/issues"
+  },
+  "homepage": "https://github.com/Junel-Balbin/BC12-Employee-Tracker#readme"
+}
