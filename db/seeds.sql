@@ -1,7 +1,8 @@
 INSERT INTO department (department_name) VALUES
     ("Human Resources"),
     ("Finance Billing"),
-    ("Engineering Production");
+    ("Engineering Production"),
+    ("Top Secret");
 
 INSERT INTO role (title, salary, department_id) VALUES
     ("Recruiter Specialist", 30000, 1),
@@ -11,8 +12,8 @@ INSERT INTO role (title, salary, department_id) VALUES
     ("Associate Engineer", 30000, 3),
     ("Senior Engineer", 40000, 3),
     ("HR Manager", 50000, 1),
-    ("FB Manager", 50000, 2),
-    ("EP Manager", 50000, 3);
+    ("Finance Manager", 50000, 2),
+    ("Engineer Manager", 50000, 3);
 
 INSERT INTO employee (first_name, last_name, role_id, manager_id) VALUES
     ("Etta", "Candy", 4, 1),

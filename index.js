@@ -1,7 +1,7 @@
 const express = require('express');
 const mysql = require('mysql2');
-const routes = require("./routes");
-const { default: inquirer } = require('inquirer');
+const inquirer = require('inquirer');
+const db = require('./db/connection');
 
 const port = process.env.PORT || 3001;
 
@@ -9,7 +9,6 @@ const app = express();
 
 app.use(express.urlencoded({ extended: true }));
 app.use(express.json());
-
 
 // Add Prompt for menu.
 async function promptMenu() {
@@ -25,41 +24,55 @@ async function promptMenu() {
                 "Add new department.",
                 "Add new role.",
                 "Add new employee.",
-                "Update employee role."
+                "Update employee role.",
+                "Exit"
             ]
         }
     ]);
-}
 
-
-// Create If statements for "View all departments."
-if (answers.menu === "View all departments.") {
-
-// Call a function to view all departments.
-
-}
-
-
-
-
-// Create If statements for "View all roles."
-if (answers.menu === "View all roles.") {
-
-// Call a function to View all roles.
-    
-}
-
-
-
-
-// Create If statements for "View all employees."
-if (answers.menu === "View all employees.") {
-
-// Call a function to View all employees.
+    // Create If statements for "View all departments."
+    if (answers.menu === "View all departments.") {
+        const query = "SELECT * FROM department";
         
-}
+        db.query(query, (err, result) => {
+            if (err) {
+                console.error("SQL query error:", err);
+            } else {
+                console.table(result);
+                promptMenu();
+            }
+        });
+    }
 
+    // Create If statements for "View all roles."
+    if (answers.menu === "View all roles.") {
+        const query = "SELECT * FROM role";
+        
+        db.query(query, (err, result) => {
+            if (err) {
+                console.error("SQL query error:", err);
+            } else {
+                console.table(result);
+                promptMenu();
+            }
+        });
+    }
 
+    // Create If statements for "View all employees."
+    if (answers.menu === "View all employees.") {
+        const query = "SELECT * FROM employee";
+        
+        db.query(query, (err, result) => {
+            if (err) {
+                console.error("SQL query error:", err);
+            } else {
+                console.table(result);
+                promptMenu();
+            }
+        });
+    }
+
+/*
 
 
 // Create If statements for "Add new department."
@@ -115,13 +128,14 @@ if (answers.menu === "Update employee role.") {
                         
 }
 
+*/
 
 
 // Exiting the application
 else if (answers.menu === "Exit") {
-
-console.log("Exiting the application...");
-    process.exit(0);
+console.log("Have an AWESOME day!");
+        process.exit(0);
+    }
 }
 
 
