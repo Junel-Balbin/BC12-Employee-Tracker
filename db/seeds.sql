@@ -1,9 +1,11 @@
+-- Insert department data: HR, Finance, Engineering, and Top Secret.
 INSERT INTO department (department_name) VALUES
     ("Human Resources"),
     ("Finance Billing"),
     ("Engineering Production"),
     ("Top Secret");
 
+-- Insert role data with title, salary, and department.
 INSERT INTO role (title, salary, department_id) VALUES
     ("Recruiter Specialist", 30000, 1),
     ("Senior Recruiter", 40000, 1),
@@ -15,6 +17,7 @@ INSERT INTO role (title, salary, department_id) VALUES
     ("Finance Manager", 50000, 2),
     ("Engineer Manager", 50000, 3);
 
+-- Insert employee data with first name, last name, role, and manager ID.
 INSERT INTO employee (first_name, last_name, role_id, manager_id) VALUES
     ("Etta", "Candy", 4, 1),
     ("Barbara", "Minerva", 5, 1),
@@ -25,3 +28,4 @@ INSERT INTO employee (first_name, last_name, role_id, manager_id) VALUES
     ("Diana", "Prince", 1, NULL),
     ("Clark", "Kent", 2, NULL),
     ("Bruce", "Wayne", 3, NULL);
+-- NULL indicates no manager ID because they hold title.

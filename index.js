@@ -1,3 +1,4 @@
+// Import necessary libraries and dependencies.
 const express = require('express');
 const mysql = require('mysql2');
 const inquirer = require('inquirer');
@@ -7,10 +8,11 @@ const port = process.env.PORT || 3001;
 
 const app = express();
 
+// Configure Express to handle JSON and URL-encoded data.
 app.use(express.urlencoded({ extended: true }));
 app.use(express.json());
 
-// Add Prompt for menu.
+// Function to prompt the user with a menu of options.
 async function promptMenu() {
     const answers = await inquirer.prompt([
         {
@@ -30,10 +32,11 @@ async function promptMenu() {
         }
     ]);
 
-    // Create If statements for "View all departments."
+    // If statements for "View all departments."
     if (answers.menu === "View all departments.") {
         const query = "SELECT * FROM department";
         
+        // Execute SQL query and display results.
         db.query(query, (err, result) => {
             if (err) {
                 console.error("SQL query error:", err);
@@ -44,10 +47,11 @@ async function promptMenu() {
         });
     }
 
-    // Create If statements for "View all roles."
+    // If statements for "View all roles."
     if (answers.menu === "View all roles.") {
         const query = "SELECT * FROM role";
         
+        // Execute SQL query and display results.
         db.query(query, (err, result) => {
             if (err) {
                 console.error("SQL query error:", err);
@@ -58,10 +62,11 @@ async function promptMenu() {
         });
     }
 
-    // Create If statements for "View all employees."
+    // If statements for "View all employees."
     if (answers.menu === "View all employees.") {
         const query = "SELECT * FROM employee";
         
+        // Execute SQL query and display results.
         db.query(query, (err, result) => {
             if (err) {
                 console.error("SQL query error:", err);
@@ -72,8 +77,7 @@ async function promptMenu() {
         });
     }
 
-    // Create If statements for "Add new department."
-    // Create Prompt for input.
+    // If statements for "Add new department."
     if (answers.menu === "Add new department.") {
         const answers = await inquirer.prompt([
             {
@@ -83,6 +87,7 @@ async function promptMenu() {
             }
         ]);
         
+        // Insert new department into the database.
         db.query(`INSERT INTO department (department_name) VALUES (?)`, [answers.newDepartment], (err, result) => {
             if (err) {
                 console.error("SQL query error:", err);
@@ -92,8 +97,7 @@ async function promptMenu() {
         });
     }
     
-    // Create If statements for "Add new role."
-    // Create Prompt for input.
+    // If statements for "Add new role."
     if (answers.menu === "Add new role.") {
         const answers = await inquirer.prompt([
             {
@@ -113,6 +117,7 @@ async function promptMenu() {
             }
         ]);
         
+        // Insert new role into the database.
         db.query(`INSERT INTO role (title, salary, department_id) VALUES (?, ?, ?)`, [answers.newRole, answers.newSalary, answers.newDepartmentID], (err, result) => {
             if (err) {
                 console.error("SQL query error:", err);
@@ -122,8 +127,7 @@ async function promptMenu() {
         });
     }
 
-    // Create If statements for "Add new employee."
-    // Create Prompt for input.
+    // If statements for "Add new employee."
     if (answers.menu === "Add new employee.") {
         const answers = await inquirer.prompt([
             {
@@ -148,6 +152,7 @@ async function promptMenu() {
             }
         ]);
         
+        // Inserts new employee into the database.
         db.query(`INSERT INTO employee (first_name, last_name, role_id, manager_id) VALUES (?, ?, ?, ?)`, [answers.firstName, answers.lastName, answers.roleID, answers.managerID], (err, result) => {
             if (err) {
                 console.error("SQL query error:", err);
@@ -158,8 +163,7 @@ async function promptMenu() {
     }
 
 
-    // Create If statements for "Update employee role."
-    // Create Prompt for input.
+    // If statements for "Update employee role."
     if (answers.menu === "Update employee role.") {
         const updateAnswers = await inquirer.prompt([
             {
@@ -171,13 +175,19 @@ async function promptMenu() {
                 type: "input",
                 name: "newRoleID",
                 message: "Enter new role ID: "
+            },
+            {
+                type: "input",
+                name: "newManagerID",
+                message: "Enter new Manager ID: "
             }
         ]);
 
+        // Updates the employees role in the database.
         db.query(
-            "UPDATE employee SET role_id = ? WHERE first_name = ? OR last_name = ?",
-            [updateAnswers.newRoleID, updateAnswers.employeeName, updateAnswers.employeeName],
-            (err, result) => {
+            "UPDATE employee SET role_id = ?, manager_id = ? WHERE first_name = ? OR last_name = ?",
+            [updateAnswers.newRoleID, updateAnswers.newManagerID, updateAnswers.employeeName, updateAnswers.employeeName],
+            (err, result) =>{
                 if (err) {
                     console.error("SQL query error:", err);
                 }
@@ -189,10 +199,10 @@ async function promptMenu() {
 
     // Exiting the application
     else if (answers.menu === "Exit") {
-        console.log("Have an AWESOME day!");
+        console.log("THANK YOU! TAKE CARE AND HAVE A NICE DAY!");
             process.exit(0);
         }
     }
 
-
+// Starts menu prompt when launched.
 promptMenu();
