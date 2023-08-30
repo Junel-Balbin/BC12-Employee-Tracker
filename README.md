@@ -3,27 +3,30 @@
 # BC12-Employee-Tracker
 
 ## Description:
-* A simple Employee Tracker.
+* Content Management Systems (CMS). Employee Tracker.
+* A command-line application to manage a company's employee database.
 * This application uses Inquirer and MySQL2.
-* [Video Walkthrough:]()
+* [Video Walkthrough: Employee Tracker.](https://youtu.be/Z6OYVvLMlmw)
 
 
 ## Installation:
-* 
+* `git clone git@github.com:Junel-Balbin/BC12-Employee-Tracker.git`
+* `npm install`
+* `mysql -u root -p`
+* `source copy path, schema.sql & seeds.sql`
+* `node index.js`
+
 
 ## Usage:
-* 
+* [Video Walkthrough: Employee Tracker.](https://youtu.be/Z6OYVvLMlmw)
 
 ## Application User Interface:
-*
-
-<img src="">
-<img src="">
+<img src="./assets/images/screenshot.png">
 
 ## Credits & Resources:
 * Google search & Youtube videos.
+* Mini Project 12: EdX and UCB.
 * ChatGpt for troubleshooting.
-* Starter code EdX and UCB.
 * Stack Overflow & MDN.
 
 ## Coded With:
