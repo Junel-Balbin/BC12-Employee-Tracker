@@ -19,12 +19,12 @@ INSERT INTO role (title, salary, department_id) VALUES
 
 -- Insert employee data with first name, last name, role, and manager ID.
 INSERT INTO employee (first_name, last_name, role_id, manager_id) VALUES
-    ("Etta", "Candy", 4, 1),
-    ("Barbara", "Minerva", 5, 1),
-    ("Lois", "Lane", 6, 2),
-    ("Jimmy", "Olsen", 7, 2),
-    ("Dick", "Grayson", 8, 3),
-    ("Terry", "McGinnis", 9, 3),
+    ("Etta", "Candy", 4, 7),
+    ("Barbara", "Minerva", 5, 7),
+    ("Lois", "Lane", 6, 8),
+    ("Jimmy", "Olsen", 7, 8),
+    ("Dick", "Grayson", 8, 9),
+    ("Terry", "McGinnis", 9, 9),
     ("Diana", "Prince", 1, NULL),
     ("Clark", "Kent", 2, NULL),
     ("Bruce", "Wayne", 3, NULL);
