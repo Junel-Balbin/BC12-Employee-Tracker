@@ -12,6 +12,45 @@ const app = express();
 app.use(express.urlencoded({ extended: true }));
 app.use(express.json());
 
+
+// Function to fetch roles from the database and return them as choices.
+async function fetchRolesFromDatabase() {
+    return new Promise((resolve, reject) => {
+        const query = "SELECT id, title FROM role";
+        db.query(query, (err, results) => {
+            if (err) {
+                reject(err);
+            } else {
+                const roleChoices = results.map((role) => ({
+                    name: role.title,
+                    value: role.id,
+                }));
+                resolve(roleChoices);
+            }
+        });
+    });
+}
+
+// Function to fetch managers (employees with null manager IDs) from the database and return them as choices
+async function fetchManagersFromDatabase() {
+    return new Promise((resolve, reject) => {
+        const query = "SELECT id, first_name, last_name FROM employee WHERE manager_id IS NULL";
+        db.query(query, (err, results) => {
+            if (err) {
+                reject(err);
+            } else {
+                const managerChoices = results.map((manager) => ({
+                    name: `${manager.first_name} ${manager.last_name}`,
+                    value: manager.id,
+                }));
+                resolve(managerChoices);
+            }
+        });
+    });
+}
+
+
+
 // Function to prompt the user with a menu of options.
 async function promptMenu() {
     const answers = await inquirer.prompt([
@@ -129,7 +168,13 @@ async function promptMenu() {
 
     // If statements for "Add new employee."
     if (answers.menu === "Add new employee.") {
-        const answers = await inquirer.prompt([
+        // Fetch roles from the database and convert them to choices
+        const roleChoices = await fetchRolesFromDatabase();
+        
+        // Fetch managers from the database and convert them to choices
+        const managerChoices = await fetchManagersFromDatabase();
+        
+        const employeeAnswers = await inquirer.prompt([
             {
                 type: "input",
                 name: "firstName",
@@ -141,19 +186,21 @@ async function promptMenu() {
                 message: "Type Last Name."
             },
             {
-                type: "input",
+                type: "list",
                 name: "roleID",
-                message: "Type Role ID."
+                message: "Select Role:",
+                choices: roleChoices
             },
             {
-                type: "input",
+                type: "list",
                 name: "managerID",
-                message: "Type Manager ID."
+                message: "Select Manager:",
+                choices: managerChoices
             }
         ]);
         
-        // Inserts new employee into the database.
-        db.query(`INSERT INTO employee (first_name, last_name, role_id, manager_id) VALUES (?, ?, ?, ?)`, [answers.firstName, answers.lastName, answers.roleID, answers.managerID], (err, result) => {
+        // Insert the new employee into the database.
+        db.query(`INSERT INTO employee (first_name, last_name, role_id, manager_id) VALUES (?, ?, ?, ?)`, [employeeAnswers.firstName, employeeAnswers.lastName, employeeAnswers.roleID, employeeAnswers.managerID], (err, result) => {
             if (err) {
                 console.error("SQL query error:", err);
             } else {
@@ -162,9 +209,14 @@ async function promptMenu() {
         });
     }
 
-
     // If statements for "Update employee role."
     if (answers.menu === "Update employee role.") {
+        // Fetch roles from the database and convert them to choices.
+        const roleChoices = await fetchRolesFromDatabase();
+        
+        // Fetch managers from the database and convert them to choices.
+        const managerChoices = await fetchManagersFromDatabase();
+        
         const updateAnswers = await inquirer.prompt([
             {
                 type: "input",
@@ -172,22 +224,24 @@ async function promptMenu() {
                 message: "Enter the employee's name: "
             },
             {
-                type: "input",
+                type: "list",
                 name: "newRoleID",
-                message: "Enter new role ID: "
+                message: "Select new Role:",
+                choices: roleChoices
             },
             {
-                type: "input",
+                type: "list",
                 name: "newManagerID",
-                message: "Enter new Manager ID: "
+                message: "Select new Manager:",
+                choices: managerChoices
             }
         ]);
 
-        // Updates the employees role in the database.
+        // Updates the employee's role in the database.
         db.query(
             "UPDATE employee SET role_id = ?, manager_id = ? WHERE first_name = ? OR last_name = ?",
             [updateAnswers.newRoleID, updateAnswers.newManagerID, updateAnswers.employeeName, updateAnswers.employeeName],
-            (err, result) =>{
+            (err, result) => {
                 if (err) {
                     console.error("SQL query error:", err);
                 }
@@ -196,13 +250,12 @@ async function promptMenu() {
         );
     }
 
-
     // Exiting the application
     else if (answers.menu === "Exit") {
         console.log("THANK YOU! TAKE CARE AND HAVE A NICE DAY!");
-            process.exit(0);
-        }
+        process.exit(0);
     }
+}
 
 // Starts menu prompt when launched.
 promptMenu();
