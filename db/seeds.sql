@@ -2,8 +2,7 @@
 INSERT INTO department (department_name) VALUES
     ("Human Resources"),
     ("Finance Billing"),
-    ("Engineering Production"),
-    ("Top Secret");
+    ("Engineering Production");
 
 -- Insert role data with title, salary, and department.
 INSERT INTO role (title, salary, department_id) VALUES

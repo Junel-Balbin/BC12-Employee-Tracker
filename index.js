@@ -12,7 +12,6 @@ const app = express();
 app.use(express.urlencoded({ extended: true }));
 app.use(express.json());
 
-
 // Function to fetch roles from the database and return them as choices.
 async function fetchRolesFromDatabase() {
     return new Promise((resolve, reject) => {
@@ -49,6 +48,74 @@ async function fetchManagersFromDatabase() {
     });
 }
 
+// Function to fetch department choices from the database.
+async function fetchDepartmentChoices() {
+    return new Promise((resolve, reject) => {
+        const query = "SELECT id, department_name FROM department";
+        db.query(query, (err, results) => {
+            if (err) {
+                reject(err);
+            } else {
+                const departmentChoices = results.map((department) => ({
+                    name: department.department_name,
+                    value: department.id,
+                }));
+                resolve(departmentChoices);
+            }
+        });
+    });
+}
+
+// Function to fetch role choices from the database.
+async function fetchRoleChoices() {
+    return new Promise((resolve, reject) => {
+        const query = "SELECT id, title FROM role";
+        db.query(query, (err, results) => {
+            if (err) {
+                reject(err);
+            } else {
+                const roleChoices = results.map((role) => ({
+                    name: role.title,
+                    value: role.id,
+                }));
+                resolve(roleChoices);
+            }
+        });
+    });
+}
+
+// Function to fetch employee choices from the database.
+async function fetchEmployeeChoices() {
+    return new Promise((resolve, reject) => {
+        const query = "SELECT id, first_name, last_name FROM employee";
+        db.query(query, (err, results) => {
+            if (err) {
+                reject(err);
+            } else {
+                const employeeChoices = results.map((employee) => ({
+                    name: `${employee.first_name} ${employee.last_name}`,
+                    value: employee.id,
+                }));
+                resolve(employeeChoices);
+            }
+        });
+    });
+}
+
+// Function to fetch employee names from the database and convert them to choices.
+async function fetchEmployeeNamesFromDatabase() {
+    return new Promise((resolve, reject) => {
+        const query = "SELECT first_name, last_name FROM employee";
+        db.query(query, (err, results) => {
+            if (err) {
+                reject(err);
+            } else {
+                const employeeNames = results.map((employee) => `${employee.first_name} ${employee.last_name}`);
+                resolve(employeeNames);
+            }
+        });
+    });
+}
 
 
 // Function to prompt the user with a menu of options.
@@ -66,6 +133,10 @@ async function promptMenu() {
                 "Add new role.",
                 "Add new employee.",
                 "Update employee role.",
+                "Delete department.",
+                "Delete role.",
+                "Delete employee.",
+                "View department budget.",
                 "Exit"
             ]
         }
@@ -74,7 +145,7 @@ async function promptMenu() {
     // If statements for "View all departments."
     if (answers.menu === "View all departments.") {
         const query = "SELECT * FROM department";
-        
+
         // Execute SQL query and display results.
         db.query(query, (err, result) => {
             if (err) {
@@ -89,7 +160,7 @@ async function promptMenu() {
     // If statements for "View all roles."
     if (answers.menu === "View all roles.") {
         const query = "SELECT * FROM role";
-        
+
         // Execute SQL query and display results.
         db.query(query, (err, result) => {
             if (err) {
@@ -104,7 +175,7 @@ async function promptMenu() {
     // If statements for "View all employees."
     if (answers.menu === "View all employees.") {
         const query = "SELECT * FROM employee";
-        
+
         // Execute SQL query and display results.
         db.query(query, (err, result) => {
             if (err) {
@@ -125,17 +196,18 @@ async function promptMenu() {
                 message: "Type new department name."
             }
         ]);
-        
+
         // Insert new department into the database.
         db.query(`INSERT INTO department (department_name) VALUES (?)`, [answers.newDepartment], (err, result) => {
             if (err) {
                 console.error("SQL query error:", err);
             } else {
+                console.log("---ADDED NEW DEPARTMENT SUCCESSFULLY---");
                 promptMenu();
             }
         });
     }
-    
+
     // If statements for "Add new role."
     if (answers.menu === "Add new role.") {
         const answers = await inquirer.prompt([
@@ -152,15 +224,16 @@ async function promptMenu() {
             {
                 type: "input",
                 name: "newDepartmentID",
-                message: "Type Department ID."
+                message: "Type New Department ID."
             }
         ]);
-        
+
         // Insert new role into the database.
         db.query(`INSERT INTO role (title, salary, department_id) VALUES (?, ?, ?)`, [answers.newRole, answers.newSalary, answers.newDepartmentID], (err, result) => {
             if (err) {
                 console.error("SQL query error:", err);
             } else {
+                console.log("---ADDED NEW ROLE SUCCESSFULLY---");
                 promptMenu();
             }
         });
@@ -168,12 +241,12 @@ async function promptMenu() {
 
     // If statements for "Add new employee."
     if (answers.menu === "Add new employee.") {
-        // Fetch roles from the database and convert them to choices
+        // Fetch roles from the database and convert them to choices.
         const roleChoices = await fetchRolesFromDatabase();
-        
-        // Fetch managers from the database and convert them to choices
+
+        // Fetch managers from the database and convert them to choices.
         const managerChoices = await fetchManagersFromDatabase();
-        
+
         const employeeAnswers = await inquirer.prompt([
             {
                 type: "input",
@@ -198,56 +271,16 @@ async function promptMenu() {
                 choices: managerChoices
             }
         ]);
-        
+
         // Insert the new employee into the database.
         db.query(`INSERT INTO employee (first_name, last_name, role_id, manager_id) VALUES (?, ?, ?, ?)`, [employeeAnswers.firstName, employeeAnswers.lastName, employeeAnswers.roleID, employeeAnswers.managerID], (err, result) => {
             if (err) {
                 console.error("SQL query error:", err);
             } else {
+                console.log("---ADDED NEW EMPLOYEE SUCCESSFULLY---");
                 promptMenu();
             }
         });
-    }
-
-    // If statements for "Update employee role."
-    if (answers.menu === "Update employee role.") {
-        // Fetch roles from the database and convert them to choices.
-        const roleChoices = await fetchRolesFromDatabase();
-        
-        // Fetch managers from the database and convert them to choices.
-        const managerChoices = await fetchManagersFromDatabase();
-        
-        const updateAnswers = await inquirer.prompt([
-            {
-                type: "input",
-                name: "employeeName",
-                message: "Enter the employee's name: "
-            },
-            {
-                type: "list",
-                name: "newRoleID",
-                message: "Select new Role:",
-                choices: roleChoices
-            },
-            {
-                type: "list",
-                name: "newManagerID",
-                message: "Select new Manager:",
-                choices: managerChoices
-            }
-        ]);
-
-        // Updates the employee's role in the database.
-        db.query(
-            "UPDATE employee SET role_id = ?, manager_id = ? WHERE first_name = ? OR last_name = ?",
-            [updateAnswers.newRoleID, updateAnswers.newManagerID, updateAnswers.employeeName, updateAnswers.employeeName],
-            (err, result) => {
-                if (err) {
-                    console.error("SQL query error:", err);
-                }
-                promptMenu();
-            }
-        );
     }
 
     // Exiting the application
