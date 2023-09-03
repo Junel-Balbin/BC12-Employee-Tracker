@@ -6,7 +6,9 @@
 * Content Management Systems (CMS). Employee Tracker.
 * A command-line application to manage a company's employee database.
 * This application uses Inquirer and MySQL2.
-* [Video Walkthrough: Employee Tracker.](https://youtu.be/Z6OYVvLMlmw)
+* Bonus feature to delete departments, roles & managers.
+* Bonus feature to view total salary budget for departments.
+* [Video Walkthrough: Employee Tracker.](https://youtu.be/rl-IGYweEso)
 
 
 ## Installation:
@@ -18,7 +20,7 @@
 
 
 ## Usage:
-* [Video Walkthrough: Employee Tracker.](https://youtu.be/Z6OYVvLMlmw)
+* [Video Walkthrough: Employee Tracker.](https://youtu.be/rl-IGYweEso)
 
 ## Application User Interface:
 <img src="./assets/images/screenshot.png">

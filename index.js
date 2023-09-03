@@ -283,6 +283,147 @@ async function promptMenu() {
         });
     }
 
+    // If statements for "Update employee role."
+    if (answers.menu === "Update employee role.") {
+    // Fetch roles from the database and convert them to choices.
+    const roleChoices = await fetchRolesFromDatabase();
+    
+    // Fetch managers from the database and convert them to choices.
+    const managerChoices = await fetchManagersFromDatabase();
+
+    // Fetch employee choices (with id) from the database.
+    const employeeChoices = await fetchEmployeeChoices();
+
+    const updateAnswers = await inquirer.prompt([
+        {
+            type: "list",
+            name: "employeeId",
+            message: "Select the employee to update:",
+            choices: employeeChoices
+        },
+        {
+            type: "list",
+            name: "newRoleID",
+            message: "Select new Role:",
+            choices: roleChoices
+        },
+        {
+            type: "list",
+            name: "newManagerID",
+            message: "Select new Manager:",
+            choices: managerChoices
+        }
+    ]);
+
+    // Updates the employee's role in the database using employee_id.
+    db.query(
+        "UPDATE employee SET role_id = ?, manager_id = ? WHERE id = ?",
+        [updateAnswers.newRoleID, updateAnswers.newManagerID, updateAnswers.employeeId],
+        (err, result) => {
+            if (err) {
+                console.error("SQL query error:", err);
+            } else {
+                console.log("---UPDATED EMPLOYEE ROLE SUCCESSFULLY---");
+                promptMenu();
+            }
+        }
+    );
+}
+
+    // If statements for "Delete department."
+    if (answers.menu === "Delete department.") {
+        const departmentChoices = await fetchDepartmentChoices();
+        const departmentID = await inquirer.prompt([
+            {
+                type: "list",
+                name: "departmentID",
+                message: "Select a department to delete:",
+                choices: departmentChoices
+            }
+        ]);
+
+        // Delete the selected department from the database.
+        db.query("DELETE FROM department WHERE id = ?", [departmentID.departmentID], (err, result) => {
+            if (err) {
+                console.error("SQL query error:", err);
+            } else {
+                console.log("---DELETED DEPARTMENT SUCCESSFULLY---");
+            }
+            promptMenu();
+        });
+    }
+
+    // If statements for "Delete role."
+    if (answers.menu === "Delete role.") {
+        const roleChoices = await fetchRoleChoices();
+        const roleID = await inquirer.prompt([
+            {
+                type: "list",
+                name: "roleID",
+                message: "Select a role to delete:",
+                choices: roleChoices
+            }
+        ]);
+
+        // Delete the selected role from the database.
+        db.query("DELETE FROM role WHERE id = ?", [roleID.roleID], (err, result) => {
+            if (err) {
+                console.error("SQL query error:", err);
+            } else {
+                console.log("---DELETED ROLE SUCCESSFULLY---");
+            }
+            promptMenu();
+        });
+    }
+
+    // If statements for "Delete employee."
+    if (answers.menu === "Delete employee.") {
+        // Fetch employee name from the database.
+        const employeeChoices = await fetchEmployeeChoices();
+        const employeeID = await inquirer.prompt([
+            {
+                type: "list",
+                name: "employeeID",
+                message: "Select an employee to delete:",
+                choices: employeeChoices
+            }
+        ]);
+
+        // Delete the selected employee from the database.
+        db.query("DELETE FROM employee WHERE id = ?", [employeeID.employeeID], (err, result) => {
+            if (err) {
+                console.error("SQL query error:", err);
+            } else {
+                console.log("---DELETED EMPLOYEE SUCCESSFULLY---");
+            }
+            promptMenu();
+        });
+    }
+
+    // Add a menu option to view the total utilized budget of a department.
+    if (answers.menu === "View department budget.") {
+        const departmentChoices = await fetchDepartmentChoices();
+        const departmentID = await inquirer.prompt([
+            {
+                type: "list",
+                name: "departmentID",
+                message: "Select a department to view budget:",
+                choices: departmentChoices
+            }
+        ]);
+
+        // Query the database to calculate the total salary budget for the selected department.
+        const query = "SELECT SUM(role.salary) AS total_budget FROM employee INNER JOIN role ON employee.role_id = role.id WHERE role.department_id = ?";
+        db.query(query, [departmentID.departmentID], (err, result) => {
+            if (err) {
+                console.error("SQL query error:", err);
+            } else {
+                console.log(`Total Budget for the department: $${result[0].total_budget}`);
+            }
+            promptMenu();
+        });
+    }
+
     // Exiting the application
     else if (answers.menu === "Exit") {
         console.log("THANK YOU! TAKE CARE AND HAVE A NICE DAY!");
